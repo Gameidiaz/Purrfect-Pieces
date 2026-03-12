@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <script src="globals.js"></script>
+        <title>Purrfect Pieces</title>
+    </head>
+    <body>
+        <div class="ui-container">
+            <h1 class="logo">Settings</h1>
+
+            <button onclick="window.location.href='index.html'">Menu</button>
+            <button onclick="resetSettings()">Reset</button>
+
+            <label>Primary Color
+                <input type="color" id="primaryColor">
+            </label>
+
+            <label>Secondary Color
+                <input type="color" id="secondaryColor">
+            </label>
+
+            <label>Background Image
+                <input type="file" id="bgImageFile" accept="image/*">
+            </label>
+        </div>
+        <script>
+            document.getElementById('primaryColor').value = localStorage.getItem('primaryColor') || defaults.primaryColor;
+            document.getElementById('secondaryColor').value = localStorage.getItem('secondaryColor') || defaults.secondaryColor;
+
+            document.getElementById('primaryColor').addEventListener('input', () => {
+                localStorage.setItem('primaryColor', document.getElementById('primaryColor').value);
+                applySettings();
+            });
+
+            document.getElementById('secondaryColor').addEventListener('input', () => {
+                localStorage.setItem('secondaryColor', document.getElementById('secondaryColor').value);
+                applySettings();
+            });
+
+            document.getElementById('bgImageFile').addEventListener('change', () => {
+                const file = document.getElementById('bgImageFile').files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    localStorage.setItem('bgImage', `url("${e.target.result}")`);
+                    applySettings();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            function resetSettings() {
+                localStorage.removeItem('bgImage');
+                localStorage.removeItem('primaryColor');
+                localStorage.removeItem('secondaryColor');
+                document.getElementById('primaryColor').value = defaults.primaryColor;
+                document.getElementById('secondaryColor').value = defaults.secondaryColor;
+                document.getElementById('bgImageFile').value = '';
+                applySettings();
+            }
+        </script>
+    </body>
+</html>

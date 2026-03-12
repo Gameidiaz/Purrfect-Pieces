@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <script src="globals.js"></script>
+        <title>Purrfect Pieces</title>
+    </head>
+    <body>
+        <div class="ui-container">
+            <h1 class="logo">100 Puzzle Levels</h1>
+            <button onclick="window.location.href='index.html'">Menu</button>
+            <label>Upload Image
+                <input type="file" id="uploadImage" accept="image/*">
+            </label>
+            <button onclick="clearUploads()">Clear Uploads</button>
+            <div class="puzzle-container">
+            </div>
+        </div>
+        <script src="play.js"></script>
+    </body>
+</html>

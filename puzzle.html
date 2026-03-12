@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <script src="globals.js"></script>
+        <title>Purrfect Pieces</title>
+    </head>
+    <body>
+        <div class="ui-container">
+            <h1 class="logo" id="levelTitle">Level</h1>
+            <button onclick="window.location.href='play.html'">Puzzles</button>
+            <button onclick="shuffle()">Shuffle</button>
+            <label>Size: <span id="gridLabel">3×3</span>
+                <input type="range" id="gridSlider" min="2" max="6" value="3" oninput="changeGrid(this.value)">
+            </label>
+            <img id="refImage">
+            <div id="board"></div>
+            <p id="moveCount">Moves: 0</p>
+        </div>
+        <script src="puzzle.js"></script>
+    </body>
+</html>
