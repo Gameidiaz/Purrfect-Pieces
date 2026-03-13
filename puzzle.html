@@ -10,6 +10,8 @@
         <div class="ui-container">
             <h1 class="logo" id="levelTitle">Level</h1>
             <button onclick="window.location.href='play.html'">Puzzles</button>
+            <button id="prevBtn" onclick="prevLevel()" style="display:none">&#8592; Prev</button>
+            <button id="nextBtn" onclick="nextLevel()" style="display:none">Next &#8594;</button>
             <button onclick="shuffle()">Shuffle</button>
             <label>Size: <span id="gridLabel">3×3</span>
                 <input type="range" id="gridSlider" min="2" max="6" value="3" oninput="changeGrid(this.value)">

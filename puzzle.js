@@ -130,3 +130,21 @@ function changeGrid(value) {
     document.getElementById('gridLabel').textContent = `${GRID}×${GRID}`;
     shuffle();
 }
+
+if (!isCustom) {
+    // Show prev if level > 1
+    if (level > 1) document.getElementById('prevBtn').style.display = '';
+
+    // Show next if the next image exists
+    const testImg = new Image();
+    testImg.onload = () => document.getElementById('nextBtn').style.display = '';
+    testImg.src = `images/Cat_${level + 1}.png`;
+}
+
+function prevLevel() {
+    window.location.href = `puzzle.html?level=${level - 1}`;
+}
+
+function nextLevel() {
+    window.location.href = `puzzle.html?level=${level + 1}`;
+}
