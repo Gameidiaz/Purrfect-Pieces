@@ -14,6 +14,8 @@ let selected = null;
 let moves = 0;
 let boardW = 450;
 let boardH = 450;
+let history = [];
+let initialTiles = [];
 
 function tileW() { return Math.floor(boardW / GRID); }
 function tileH() { return Math.floor(boardH / GRID); }
@@ -94,12 +96,14 @@ function clickTile(index) {
     const tmp = tiles[selected];
     tiles[selected] = tiles[index];
     tiles[index] = tmp;
+    history.push([selected, index]);
     moves++;
     document.getElementById('moveCount').textContent = `Moves: ${moves}`;
     selected = null;
     updateBoard();
 
     if (isSolved()) {
+        if (!isCustom) localStorage.setItem(`completed_${level}`, '1');
         setTimeout(() => alert(`Solved in ${moves} moves!`), 100);
     }
 }
@@ -121,6 +125,8 @@ function shuffle() {
         const j = Math.floor(Math.random() * (i + 1));
         [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
     }
+    initialTiles = [...tiles];
+    history = [];
 
     buildBoard();
 }
@@ -147,4 +153,26 @@ function prevLevel() {
 
 function nextLevel() {
     window.location.href = `puzzle.html?level=${level + 1}`;
+}
+
+function replay() {
+    if (history.length === 0) return;
+    const saved = [...history];
+    tiles = [...initialTiles];
+    history = [];
+    moves = 0;
+    selected = null;
+    document.getElementById('moveCount').textContent = 'Moves: 0';
+    buildBoard();
+
+    saved.forEach(([a, b], i) => {
+        setTimeout(() => {
+            const tmp = tiles[a];
+            tiles[a] = tiles[b];
+            tiles[b] = tmp;
+            moves++;
+            document.getElementById('moveCount').textContent = `Moves: ${moves}`;
+            updateBoard();
+        }, (i + 1) * 400);
+    });
 }
