@@ -155,6 +155,22 @@ input[type="file"] {
     border: var(--border-width) solid var(--primary-color);
 }
 
+#loadingScreen {
+    position: fixed;
+    inset: 0;
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+#loadingScreen p {
+    color: var(--secondary-color);
+    font-family: var(--font);
+    font-size: clamp(20px, 4vw, 40px);
+}
+
 #board {
     touch-action: none;
     max-width: 95vw;

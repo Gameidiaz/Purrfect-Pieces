@@ -1,22 +1,5 @@
 const container = document.querySelector('.puzzle-container');
 
-function isProgression() {
-    return localStorage.getItem('progressionMode') === '1';
-}
-
-function isUnlocked(level) {
-    if (!isProgression()) return true;
-    if (level === 1) return true;
-    return localStorage.getItem(`completed_${level - 1}`) === '1';
-}
-
-function toggleMode() {
-    const next = isProgression() ? '0' : '1';
-    localStorage.setItem('progressionMode', next);
-    document.getElementById('modeBtn').textContent = next === '1' ? 'Mode: Progression' : 'Mode: Free';
-    location.reload();
-}
-
 // Built-in cat levels — auto-detect how many exist
 function loadCatLevel(i) {
     const btn = document.createElement('button');
@@ -24,23 +7,18 @@ function loadCatLevel(i) {
     img.src = `images/Cat_${i}.png`;
     img.alt = `Cat ${i}`;
     img.onload = () => {
-        if (!isUnlocked(i)) {
-            btn.disabled = true;
-            btn.style.opacity = '0.35';
-            btn.style.position = 'relative';
-            btn.title = 'Complete the previous level to unlock';
-        }
         loadCatLevel(i + 1);
+    };
+    img.onerror = () => {
+        document.getElementById('loadingScreen').style.display = 'none';
     };
     btn.appendChild(img);
     btn.addEventListener('click', () => {
-        if (!isUnlocked(i)) return;
         window.location.href = `puzzle.html?level=${i}`;
     });
     container.appendChild(btn);
 }
 
-document.getElementById('modeBtn').textContent = isProgression() ? 'Mode: Progression' : 'Mode: Free';
 loadCatLevel(1);
 
 // Load saved custom images

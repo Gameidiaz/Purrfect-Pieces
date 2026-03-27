@@ -7,10 +7,31 @@
         <title>Purrfect Pieces</title>
     </head>
     <body>
+        <div id="loadingScreen">
+            <p id="loadingMsg"></p>
+        </div>
+        <script>
+            const catMessages = [
+                "Herding cats... please wait.",
+                "Convincing cats to sit still...",
+                "Bribing cats with treats...",
+                "Untangling cat from keyboard...",
+                "Cat knocked the images off the table. Picking them up...",
+                "Waiting for cat to stop sitting on the server...",
+                "Cat is judging you. Loading anyway...",
+                "Searching couch cushions for missing puzzle pieces...",
+                "Cat walked across the code. Fixing typos...",
+                "Asking cat nicely to load the images. Still waiting.",
+                "Cat said no. Loading anyway.",
+                "3AM energy detected. Loading...",
+                "Fur in the code. Debugging...",
+            ];
+            document.getElementById('loadingMsg').textContent =
+                catMessages[Math.floor(Math.random() * catMessages.length)];
+        </script>
         <div class="ui-container">
             <h1 class="logo">100 Puzzle Levels</h1>
             <button onclick="window.location.href='index.html'">Menu</button>
-            <button id="modeBtn" onclick="toggleMode()">Mode: Free</button>
             <label>Upload Image
                 <input type="file" id="uploadImage" accept="image/*">
             </label>

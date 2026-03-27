@@ -16,6 +16,28 @@ let boardW = 450;
 let boardH = 450;
 let history = [];
 let initialTiles = [];
+let timerInterval = null;
+let seconds = 0;
+
+function startTimer() {
+    clearInterval(timerInterval);
+    seconds = 0;
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        seconds++;
+        updateTimerDisplay();
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    document.getElementById('timerDisplay').textContent = `Time: ${m}:${s.toString().padStart(2, '0')}`;
+}
 
 function tileW() { return Math.floor(boardW / GRID); }
 function tileH() { return Math.floor(boardH / GRID); }
@@ -77,8 +99,20 @@ function updateBoard() {
         const srcCol = (piece - 1) % GRID;
         const srcRow = Math.floor((piece - 1) / GRID);
         tile.style.backgroundPosition = `-${srcCol * tileW()}px -${srcRow * tileH()}px`;
-        tile.style.outline = 'none';
+        tile.style.outline = i === selected ? '3px solid var(--secondary-color)' : 'none';
     }
+}
+
+function undo() {
+    if (history.length === 0) return;
+    const [a, b] = history.pop();
+    const tmp = tiles[a];
+    tiles[a] = tiles[b];
+    tiles[b] = tmp;
+    moves = Math.max(0, moves - 1);
+    document.getElementById('moveCount').textContent = `Moves: ${moves}`;
+    selected = null;
+    updateBoard();
 }
 
 function clickTile(index) {
@@ -103,8 +137,12 @@ function clickTile(index) {
     updateBoard();
 
     if (isSolved()) {
+        stopTimer();
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        const timeStr = `${m}:${s.toString().padStart(2, '0')}`;
         if (!isCustom) localStorage.setItem(`completed_${level}`, '1');
-        setTimeout(() => alert(`Solved in ${moves} moves!`), 100);
+        setTimeout(() => alert(`Solved in ${moves} moves and ${timeStr}!`), 100);
     }
 }
 
@@ -129,6 +167,7 @@ function shuffle() {
     history = [];
 
     buildBoard();
+    startTimer();
 }
 
 function changeGrid(value) {
@@ -161,8 +200,10 @@ function replay() {
     tiles = [...initialTiles];
     history = [];
     moves = 0;
+    seconds = 0;
     selected = null;
     document.getElementById('moveCount').textContent = 'Moves: 0';
+    updateTimerDisplay();
     buildBoard();
 
     saved.forEach(([a, b], i) => {
