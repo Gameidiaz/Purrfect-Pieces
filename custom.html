@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <script src="globals.js"></script>
+        <title>Purrfect Pieces</title>
+    </head>
+    <body>
+        <div class="ui-container">
+            <h1 class="logo">Custom Puzzles</h1>
+            <button onclick="window.location.href='play.html'">Back</button>
+            <label>Upload Image
+                <input type="file" id="uploadImage" accept="image/*">
+            </label>
+            <button onclick="clearUploads()">Clear Uploads</button>
+            <div class="puzzle-container" id="customContainer"></div>
+        </div>
+        <script>
+            const container = document.getElementById('customContainer');
+
+            const customImages = JSON.parse(localStorage.getItem('customImages') || '[]');
+            customImages.forEach((dataUrl, index) => addCustomButton(dataUrl, index));
+
+            document.getElementById('uploadImage').addEventListener('change', () => {
+                const file = document.getElementById('uploadImage').files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const dataUrl = e.target.result;
+                    const customImages = JSON.parse(localStorage.getItem('customImages') || '[]');
+                    customImages.push(dataUrl);
+                    localStorage.setItem('customImages', JSON.stringify(customImages));
+                    addCustomButton(dataUrl, customImages.length - 1);
+                    document.getElementById('uploadImage').value = '';
+                };
+                reader.readAsDataURL(file);
+            });
+
+            function clearUploads() {
+                localStorage.removeItem('customImages');
+                location.reload();
+            }
+
+            function addCustomButton(dataUrl, index) {
+                const btn = document.createElement('button');
+                const img = document.createElement('img');
+                img.src = dataUrl;
+                img.alt = `Custom ${index + 1}`;
+                btn.appendChild(img);
+                btn.addEventListener('click', () => {
+                    localStorage.setItem('activePuzzle', JSON.stringify({ img: dataUrl, name: `Custom ${index + 1}` }));
+                    window.location.href = 'puzzle.html?custom=1';
+                });
+                container.appendChild(btn);
+            }
+        </script>
+    </body>
+</html>
