@@ -24,10 +24,31 @@
             <label>Background Image
                 <input type="file" id="bgImageFile" accept="image/*">
             </label>
+
+            <label>Font
+                <select id="fontPicker"></select>
+            </label>
         </div>
         <script>
             document.getElementById('primaryColor').value = localStorage.getItem('primaryColor') || defaults.primaryColor;
             document.getElementById('secondaryColor').value = localStorage.getItem('secondaryColor') || defaults.secondaryColor;
+
+            const fontPicker = document.getElementById('fontPicker');
+            const savedFont = localStorage.getItem('font') || defaults.font;
+            availableFonts.forEach(f => {
+                const opt = document.createElement('option');
+                opt.value = f;
+                opt.textContent = f;
+                opt.style.fontFamily = f;
+                if (f === savedFont) opt.selected = true;
+                fontPicker.appendChild(opt);
+            });
+            fontPicker.style.fontFamily = savedFont;
+            fontPicker.addEventListener('change', () => {
+                localStorage.setItem('font', fontPicker.value);
+                fontPicker.style.fontFamily = fontPicker.value;
+                applySettings();
+            });
 
             document.getElementById('primaryColor').addEventListener('input', () => {
                 localStorage.setItem('primaryColor', document.getElementById('primaryColor').value);
@@ -54,9 +75,12 @@
                 localStorage.removeItem('bgImage');
                 localStorage.removeItem('primaryColor');
                 localStorage.removeItem('secondaryColor');
+                localStorage.removeItem('font');
                 document.getElementById('primaryColor').value = defaults.primaryColor;
                 document.getElementById('secondaryColor').value = defaults.secondaryColor;
                 document.getElementById('bgImageFile').value = '';
+                fontPicker.value = defaults.font;
+                fontPicker.style.fontFamily = defaults.font;
                 applySettings();
             }
         </script>

@@ -141,6 +141,16 @@ input[type="text"]::placeholder {
     opacity: 0.6;
 }
 
+select {
+    padding: 8px 12px;
+    border: var(--border-width) solid var(--primary-color);
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    font-size: var(--text-size);
+    cursor: pointer;
+    outline: none;
+}
+
 input[type="file"] {
     font-family: var(--font);
     font-size: clamp(14px, 2vw, 20px);
