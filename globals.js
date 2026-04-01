@@ -24,6 +24,12 @@ const availableFonts = [
     'fantasy',
 ];
 
+function playSound(src) {
+    const audio = new Audio(src);
+    audio.volume = (localStorage.getItem('sfxVolume') ?? 100) / 100;
+    audio.play();
+}
+
 function applySettings() {
     const root = document.documentElement;
     root.style.setProperty('--bg-image', localStorage.getItem('bgImage') || defaults.bgImage);

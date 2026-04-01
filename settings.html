@@ -25,6 +25,10 @@
                 <input type="file" id="bgImageFile" accept="image/*">
             </label>
 
+            <label>SFX Volume: <span id="volumeLabel">100%</span>
+                <input type="range" id="sfxVolume" min="0" max="100" value="100">
+            </label>
+
             <label>Font
                 <select id="fontPicker"></select>
             </label>
@@ -71,11 +75,23 @@
                 reader.readAsDataURL(file);
             });
 
+            const sfxVolume = document.getElementById('sfxVolume');
+            const volumeLabel = document.getElementById('volumeLabel');
+            sfxVolume.value = localStorage.getItem('sfxVolume') ?? 100;
+            volumeLabel.textContent = `${sfxVolume.value}%`;
+            sfxVolume.addEventListener('input', () => {
+                localStorage.setItem('sfxVolume', sfxVolume.value);
+                volumeLabel.textContent = `${sfxVolume.value}%`;
+            });
+
             function resetSettings() {
                 localStorage.removeItem('bgImage');
                 localStorage.removeItem('primaryColor');
                 localStorage.removeItem('secondaryColor');
                 localStorage.removeItem('font');
+                localStorage.removeItem('sfxVolume');
+                sfxVolume.value = 100;
+                volumeLabel.textContent = '100%';
                 document.getElementById('primaryColor').value = defaults.primaryColor;
                 document.getElementById('secondaryColor').value = defaults.secondaryColor;
                 document.getElementById('bgImageFile').value = '';
