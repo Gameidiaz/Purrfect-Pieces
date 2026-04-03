@@ -11,6 +11,7 @@ function loadCatLevel(i) {
     };
     img.onerror = () => {
         document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('levelCount').textContent = `${i - 1} Puzzle Levels`;
     };
     btn.appendChild(img);
     btn.addEventListener('click', () => {
