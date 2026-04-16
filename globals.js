@@ -39,3 +39,34 @@ function applySettings() {
 }
 
 applySettings();
+
+function startRainbowTrail() {
+    let hue = 0;
+    document.addEventListener('mousemove', (e) => {
+        const dot = document.createElement('div');
+        dot.style.cssText = `
+            position: fixed;
+            left: ${e.clientX}px;
+            top: ${e.clientY}px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: hsl(${hue}, 100%, 60%);
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.6s, transform 0.6s;
+        `;
+        document.body.appendChild(dot);
+        hue = (hue + 10) % 360;
+        requestAnimationFrame(() => {
+            dot.style.opacity = '0';
+            dot.style.transform = 'translate(-50%, -50%) scale(2)';
+        });
+        setTimeout(() => dot.remove(), 600);
+    });
+}
+
+if (localStorage.getItem('nyanUnlocked') === 'true') {
+    startRainbowTrail();
+}
