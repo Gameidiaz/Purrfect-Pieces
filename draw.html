@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <script src="globals.js"></script>
+        <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+        <title>Purrfect Pieces</title>
+    </head>
+    <body>
+        <div class="ui-container">
+            <h1 class="logo">Draw Your Puzzle</h1>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; align-items:center;">
+                <button onclick="window.location.href='custom.html'">Back</button>
+                <button onclick="undoStroke()">Undo</button>
+                <button onclick="clearCanvas()">Clear</button>
+                <button id="eraserBtn" onclick="setMode('eraser')">Eraser</button>
+                <button id="fillBtn" onclick="setMode('fill')">Fill</button>
+            </div>
+            <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; align-items:center;">
+                <label>Color
+                    <input type="color" id="brushColor" value="#352130">
+                </label>
+                <label>Size: <span id="sizeLabel">8</span>
+                    <input type="range" id="brushSize" min="2" max="40" value="8">
+                </label>
+            </div>
+            <div id="konva-container" style="border: 4px solid var(--primary-color); cursor: crosshair; touch-action: none;"></div>
+            <input type="text" id="puzzleName" placeholder="name your puzzle..." maxlength="32">
+            <button onclick="makePuzzle()">Make Puzzle!</button>
+        </div>
+        <script src="draw.js"></script>
+    </body>
+</html>

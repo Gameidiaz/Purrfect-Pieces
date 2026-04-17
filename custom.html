@@ -10,6 +10,7 @@
         <div class="ui-container">
             <h1 class="logo">Custom Puzzles</h1>
             <button onclick="window.location.href='play.html'">Back</button>
+            <button onclick="window.location.href='draw.html'">Draw Your Own</button>
             <label>Upload Image
                 <input type="file" id="uploadImage" accept="image/*">
             </label>
@@ -19,19 +20,26 @@
         <script>
             const container = document.getElementById('customContainer');
 
-            const customImages = JSON.parse(localStorage.getItem('customImages') || '[]');
-            customImages.forEach((dataUrl, index) => addCustomButton(dataUrl, index));
+            // Migrate old format (plain dataUrl strings) to {img, name} objects
+            let customImages = JSON.parse(localStorage.getItem('customImages') || '[]');
+            customImages = customImages.map((entry, i) =>
+                typeof entry === 'string' ? { img: entry, name: `Custom ${i + 1}` } : entry
+            );
+            localStorage.setItem('customImages', JSON.stringify(customImages));
+
+            customImages.forEach((entry, index) => addCustomButton(entry, index));
 
             document.getElementById('uploadImage').addEventListener('change', () => {
                 const file = document.getElementById('uploadImage').files[0];
                 if (!file) return;
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const dataUrl = e.target.result;
-                    const customImages = JSON.parse(localStorage.getItem('customImages') || '[]');
-                    customImages.push(dataUrl);
+                    const rawName = prompt('Name this puzzle:', file.name.replace(/\.[^.]+$/, '')) ?? '';
+                    const name = rawName.trim() || `Custom ${customImages.length + 1}`;
+                    const entry = { img: e.target.result, name };
+                    customImages.push(entry);
                     localStorage.setItem('customImages', JSON.stringify(customImages));
-                    addCustomButton(dataUrl, customImages.length - 1);
+                    addCustomButton(entry, customImages.length - 1);
                     document.getElementById('uploadImage').value = '';
                 };
                 reader.readAsDataURL(file);
@@ -42,17 +50,32 @@
                 location.reload();
             }
 
-            function addCustomButton(dataUrl, index) {
+            function addCustomButton(entry, index) {
+                const wrap = document.createElement('div');
+                wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:4px;';
+
                 const btn = document.createElement('button');
                 const img = document.createElement('img');
-                img.src = dataUrl;
-                img.alt = `Custom ${index + 1}`;
+                img.src = entry.img;
+                img.alt = entry.name;
                 btn.appendChild(img);
                 btn.addEventListener('click', () => {
-                    localStorage.setItem('activePuzzle', JSON.stringify({ img: dataUrl, name: `Custom ${index + 1}` }));
+                    localStorage.setItem('activePuzzle', JSON.stringify(entry));
                     window.location.href = 'puzzle.html?custom=1';
                 });
-                container.appendChild(btn);
+
+                const label = document.createElement('span');
+                label.textContent = entry.name;
+                label.style.cssText = `
+                    font-family: var(--font); font-size: clamp(10px, 1.5vw, 14px);
+                    color: var(--primary-color); text-align: center;
+                    max-width: clamp(44px, 8vw, 60px); overflow: hidden;
+                    text-overflow: ellipsis; white-space: nowrap;
+                `;
+
+                wrap.appendChild(btn);
+                wrap.appendChild(label);
+                container.appendChild(wrap);
             }
         </script>
     </body>
