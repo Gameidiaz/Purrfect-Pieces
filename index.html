@@ -12,8 +12,22 @@
             <button onclick="window.location.href='play.html'">Play</button>
             <button onclick="window.location.href='settings.html'">Settings</button>
             <button onclick="window.location.href='credits.html'">Credits</button>
-            <button onclick="playSound('meow.mp3')">:3</button>
+            <button onclick="playSound('audio/meow.mp3')">:3</button>
         </div>
         <button class="secret-btn" onclick="window.location.href='secret.html'"></button>
+        <audio id="menuMusic" src="audio/picture_purrfect.mp3" loop></audio>
+        <p id="musicHint" style="position:fixed;bottom:12px;left:0;right:0;text-align:center;font-size:13px;opacity:0.5;pointer-events:none;margin:0;">♪ click anywhere to start music</p>
+        <script>
+            const music = document.getElementById('menuMusic');
+            const hint = document.getElementById('musicHint');
+            music.volume = (localStorage.getItem('musicVolume') ?? 50) / 100;
+            music.play().catch(() => {
+                hint.style.display = 'block';
+                document.addEventListener('click', () => {
+                    music.play();
+                    hint.style.display = 'none';
+                }, { once: true });
+            });
+        </script>
     </body>
 </html>

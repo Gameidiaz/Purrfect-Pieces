@@ -25,6 +25,10 @@
                 <input type="file" id="bgImageFile" accept="image/*">
             </label>
 
+            <label>Music Volume: <span id="musicLabel">50%</span>
+                <input type="range" id="musicVolume" min="0" max="100" value="50">
+            </label>
+
             <label>SFX Volume: <span id="volumeLabel">100%</span>
                 <input type="range" id="sfxVolume" min="0" max="100" value="100">
             </label>
@@ -75,6 +79,15 @@
                 reader.readAsDataURL(file);
             });
 
+            const musicVolume = document.getElementById('musicVolume');
+            const musicLabel = document.getElementById('musicLabel');
+            musicVolume.value = localStorage.getItem('musicVolume') ?? 50;
+            musicLabel.textContent = `${musicVolume.value}%`;
+            musicVolume.addEventListener('input', () => {
+                localStorage.setItem('musicVolume', musicVolume.value);
+                musicLabel.textContent = `${musicVolume.value}%`;
+            });
+
             const sfxVolume = document.getElementById('sfxVolume');
             const volumeLabel = document.getElementById('volumeLabel');
             sfxVolume.value = localStorage.getItem('sfxVolume') ?? 100;
@@ -89,6 +102,9 @@
                 localStorage.removeItem('primaryColor');
                 localStorage.removeItem('secondaryColor');
                 localStorage.removeItem('font');
+                localStorage.removeItem('musicVolume');
+                musicVolume.value = 50;
+                musicLabel.textContent = '50%';
                 localStorage.removeItem('sfxVolume');
                 sfxVolume.value = 100;
                 volumeLabel.textContent = '100%';
