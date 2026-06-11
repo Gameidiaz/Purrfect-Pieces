@@ -2,6 +2,11 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="manifest" href="manifest.json">
+        <link rel="apple-touch-icon" href="images/icon.png">
+        <meta name="theme-color" content="#352130">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <link rel="stylesheet" href="style.css">
         <script src="globals.js"></script>
         <title>Purrfect Pieces</title>
@@ -17,6 +22,9 @@
         <button class="secret-btn" onclick="window.location.href='meowington.html'"></button>
         <audio id="menuMusic" src="audio/picture_purrfect.mp3" loop></audio>
         <p id="musicHint" style="position:fixed;bottom:12px;left:0;right:0;text-align:center;font-size:13px;opacity:0.5;pointer-events:none;margin:0;">♪ click anywhere to start music</p>
+        <div id="installBanner" style="display:none;position:fixed;top:10px;left:0;right:0;text-align:center;z-index:100;pointer-events:none;">
+            <button id="installBtn" style="pointer-events:auto;font-size:13px;padding:6px 14px;opacity:0.85;" onclick="handleInstall()">+ Add to Home Screen</button>
+        </div>
         <script>
             const music = document.getElementById('menuMusic');
             const hint = document.getElementById('musicHint');
@@ -28,6 +36,36 @@
                     hint.style.display = 'none';
                 }, { once: true });
             });
+
+            // Hide banner if already installed as standalone
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if (!isStandalone) {
+                const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+                let deferredPrompt = null;
+
+                window.addEventListener('beforeinstallprompt', e => {
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    document.getElementById('installBanner').style.display = 'block';
+                });
+
+                if (isIOS && !window.navigator.standalone) {
+                    const btn = document.getElementById('installBtn');
+                    btn.textContent = '+ Add to Home Screen';
+                    document.getElementById('installBanner').style.display = 'block';
+                    btn.onclick = () => alert('Tap the Share button \u{1F4E4} then "Add to Home Screen"');
+                }
+
+                window.handleInstall = async () => {
+                    if (!deferredPrompt) return;
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') document.getElementById('installBanner').style.display = 'none';
+                    deferredPrompt = null;
+                };
+            }
+
+            if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
         </script>
     </body>
 </html>

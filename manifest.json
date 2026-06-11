@@ -1,0 +1,16 @@
+{
+    "name": "Purrfect Pieces",
+    "short_name": "Purrfect Pieces",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#352130",
+    "theme_color": "#352130",
+    "icons": [
+        {
+            "src": "images/icon.png",
+            "sizes": "any",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
