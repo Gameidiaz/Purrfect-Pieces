@@ -39,3 +39,28 @@ function applySettings() {
 }
 
 applySettings();
+
+let pendingBtn = null;
+
+document.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+
+    if (btn === pendingBtn) {
+        pendingBtn = null;
+        return;
+    }
+
+    e.stopPropagation();
+
+    const audio = new Audio('audio/click.wav');
+    audio.volume = (localStorage.getItem('sfxVolume') ?? 100) / 100;
+
+    const proceed = () => {
+        pendingBtn = btn;
+        btn.click();
+    };
+
+    audio.addEventListener('ended', proceed);
+    audio.play().catch(proceed);
+}, true);

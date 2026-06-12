@@ -65,6 +65,11 @@
                 };
             }
 
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) music.pause();
+                else music.play().catch(() => {});
+            });
+
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
         </script>
     </body>
