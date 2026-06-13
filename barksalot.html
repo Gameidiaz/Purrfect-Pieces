@@ -6,10 +6,10 @@
         <script src="globals.js"></script>
         <title>Purrfect Pieces</title>
     </head>
-    <body style="background-image: url('images/shop-bg.gif'); background-repeat: repeat; background-size: 100px; background-color: #ffb9cb;">
+    <body style="background-color: #b9d4ff; --bg-image: none;">
         <div class="ui-container">
-            <h1 class="logo">Sir Meowington's Shoppe</h1>
-            <img id="shopkeeper" src="images/shopkeeper.png" alt="Sir Meowington" onclick="pokeShopkeeper()">
+            <h1 class="logo">Baron Von Barksalot's Emporium</h1>
+            <img id="shopkeeper" src="images/barksalot.png" alt="Baron Von Barksalot" onclick="pokeShopkeeper()">
             <input type="text" id="promoInput" placeholder="enter promo code..." maxlength="32" oninput="this.value = this.value.toUpperCase()">
             <button onclick="redeemCode()">Redeem</button>
             <p id="promoMsg" class="logo" style="font-size: clamp(14px, 2vw, 22px); min-height: 1.5em; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 6px;"></p>
@@ -17,16 +17,16 @@
             <button onclick="window.location.href='index.html'">go back</button>
         </div>
         <script>
-            localStorage.setItem('visitedMeowington', 'true');
+            localStorage.setItem('visitedBarksalot', 'true');
 
-            if (localStorage.getItem('visitedBarksalot') === 'true') {
+            if (localStorage.getItem('visitedMeowington') === 'true') {
                 setTimeout(() => {
                     const msg = document.getElementById('promoMsg');
                     const lines = [
-                        "...wait. mwe can smeww him on you.",
-                        "YOU WENT TO BAWKSAWOT FIWST?? >:(",
-                        "a TWAITOW. in MY shoppe. unbewiavabwe.",
-                        "...fine. mwe will sewve you anyway. but mwe is NOT happy. >_>",
+                        "...I can smell Meowington on you.",
+                        "you went to HIS shop first. BORK.",
+                        "a TRAITOR walks into the Emporium. unbelievable.",
+                        "...fine. the Baron is professional. he will serve you anyway. WOOF.",
                     ];
                     let i = 0;
                     const interval = setInterval(() => {
@@ -40,16 +40,16 @@
                 }, 500);
             }
 
-            if (localStorage.getItem('meowingtonRageQuit') === 'true') {
+            if (localStorage.getItem('barksalotRageQuit') === 'true') {
                 const overlay = document.createElement('div');
                 overlay.style.cssText = `
                     position: fixed; inset: 0; z-index: 99999;
-                    background: #1a0a10; display: flex;
+                    background: #0a1020; display: flex;
                     justify-content: center; align-items: center;
                 `;
                 const flashMsg = document.createElement('p');
                 flashMsg.style.cssText = `
-                    color: #d95b7e; font-family: Arial; font-weight: bold;
+                    color: #7eb8ff; font-family: Arial; font-weight: bold;
                     font-size: clamp(16px, 3vw, 28px); text-align: center;
                     padding: 20px; max-width: 80vw;
                 `;
@@ -57,11 +57,11 @@
                 document.body.appendChild(overlay);
 
                 const flashbacks = [
-                    "...oh. youre back.",
-                    "wook i may have ovewweacted a wittle bit >_>",
-                    "it was vewy unpwofessionaw of mwe and i appwogize",
-                    "pwease dont poke mwe again tho. i am begging uwu",
-                    "...siww fwiends? :3",
+                    "...oh. you came back.",
+                    "I may have overreacted. slightly.",
+                    "it was very unprofessional and I acknowledge that.",
+                    "please do not poke me again. I am a serious businessman.",
+                    "...still friends? 🐕",
                 ];
 
                 let i = 0;
@@ -71,21 +71,21 @@
                     if (i >= flashbacks.length) {
                         clearInterval(interval);
                         setTimeout(() => overlay.remove(), 800);
-                        localStorage.removeItem('meowingtonRageQuit');
+                        localStorage.removeItem('barksalotRageQuit');
                     }
                 }, 3000);
             }
 
             let pokeCount = 0;
             const pokeMessages = [
-                "h-hey!! stawp poking mwe!! >w<",
-                "im getting angwy >:3",
-                "STAWP IT WIGHT NOW OW I WILL SCWEEM >:(",
-                "YOU HAVE BEEN WAWNED!! SIW MEOWINGTON IS VEWY ANGWY!! >:O",
-                "THATS IT!! IM CALLING THE PAWLICE!! >:(((",
-                "YOU THINK THIS IS FUNNY?? IM TWEMBLING WITH WAGE RN >:(((((",
-                "IM SO MAD I CANT EVEN UWUUUUU AAAAAAAA >:OOOOO",
-                "...fine. do what you want. i dont cawe anymore. 😾",
+                "HEY! WHO GAVE YOU PERMISSION TO TOUCH ME?! BORK!",
+                "I SAID BACK OFF!! WOOF WOOF WOOF!!",
+                "DO YOU WANT TO GET BOOPED?! BECAUSE THIS IS HOW YOU GET BOOPED!!",
+                "BORK BORK BORK BORK BORK BORK BORK BORK!!!",
+                "I AM CALLING MY LAWYER. HIS NAME IS BISCUIT AND HE IS VERY GOOD.",
+                "THAT'S IT. I'M BITING THE COUCH. THE WHOLE COUCH. BECAUSE OF YOU.",
+                "WOOOOOOOOOOOOF. I am so done. I am SO done.",
+                "...fine. I'll just go lay down somewhere. Don't touch me. 😾",
             ];
 
             function pokeShopkeeper() {
@@ -95,7 +95,7 @@
                     if (stage >= pokeMessages.length - 1) {
                         document.getElementById('promoMsg').textContent = pokeMessages[pokeMessages.length - 1];
                         setTimeout(() => {
-localStorage.setItem('meowingtonRageQuit', 'true');
+                            localStorage.setItem('barksalotRageQuit', 'true');
                             window.location.href = 'index.html';
                         }, 2000);
                         return;
@@ -105,53 +105,25 @@ localStorage.setItem('meowingtonRageQuit', 'true');
             }
 
             const codes = {
-                "NYAN": {
-                    msg: "nyan cat puzzle unlocked :3",
-                    action: () => {
-                        localStorage.setItem('activePuzzle', JSON.stringify({ img: 'images/nyan.png', name: "Nyan Cat" }));
-                        setTimeout(() => window.location.href = 'puzzle.html?custom=1', 800);
-                    }
-                },
-                "MEOWINGTON": {
-                    msg: "loading sir meowington as a puzzle... :3",
+                "BARKSALOT": {
+                    msg: "loading the shopkeeper as a puzzle... the Baron is flattered. BORK BORK.",
                     action: () => {
                         const imgSrc = document.getElementById('shopkeeper').src;
-                        localStorage.setItem('activePuzzle', JSON.stringify({ img: imgSrc, name: "Sir Meowington" }));
-                        setTimeout(() => window.location.href = 'puzzle.html?custom=1', 800);
-                    }
-                },
-                "MAVVI": {
-                    msg: "loading mavvi as a puzzle... :3",
-                    action: () => {
-                        localStorage.setItem('activePuzzle', JSON.stringify({ img: 'images/Mavvi.png', name: "Mavvi" }));
-                        setTimeout(() => window.location.href = 'puzzle.html?custom=1', 800);
-                    }
-                },
-                "TOONCES": {
-                    msg: "loading toonces as a puzzle... :3",
-                    action: () => {
-                        localStorage.setItem('activePuzzle', JSON.stringify({ img: 'images/toonces.png', name: "Toonces" }));
-                        setTimeout(() => window.location.href = 'puzzle.html?custom=1', 800);
-                    }
-                },
-                "HOWIE": {
-                    msg: "loading howie as a puzzle... :3",
-                    action: () => {
-                        localStorage.setItem('activePuzzle', JSON.stringify({ img: 'images/howie.png', name: "Howie" }));
+                        localStorage.setItem('activePuzzle', JSON.stringify({ img: imgSrc, name: "Baron Von Barksalot" }));
                         setTimeout(() => window.location.href = 'puzzle.html?custom=1', 800);
                     }
                 },
             };
 
             const smackLines = [
-                "bawon von bawksawot?? dat FWAUD?? mwe MADE DIS GAME >:3",
-                "he is witewawwy just an ADDON. an AFTERTHOUGHT. uwu",
-                "i was hewe FIWST. dis is MY game. he just showed up one day smh >_>",
-                "his onwy pwomo code is his OWN NAME. mwe has FIVE. well. had. uwu",
-                "he smewws wike a WET DOG and nobody even asked him to be hewe >:(",
-                "SIW MEOWINGTON built dis fwom da gwound up and he thinks he can just WALK IN?? >:3",
-                "mwe has a SECWET BUTTON. vewy excwusive. vewy mystewious. not evewyone can find it uwu",
-                "his button is big and bwue and OBVIOUS because nobody would find him OTHEWWISE >:3",
+                "Sir Meowington?? oh you mean the guy who HOGGED THE WHOLE GAME?? BORK!!",
+                "yes fine I am an addon. AN ADDON WITH A BIG BEAUTIFUL BLUE BUTTON. WOOF.",
+                "he speaks in baby talk and somehow HE gets to be the main character??",
+                "I BUILT THIS EMPORIUM FROM NOTHING. he just had a head start. BORK.",
+                "his shop has a FLASHING GIF BACKGROUND. I have TASTE. a solid color. elegant.",
+                "I heard he rage quits if you poke him. I would NEVER. ...do not poke me. BORK.",
+                "you know how you find HIS shop?? a tiny pink dot. in the corner. that NO ONE CAN SEE.",
+                "I have a LABELED BUTTON on the MAIN MENU. in BLUE. very visible. very professional. BORK.",
             ];
             let smackIdx = 0;
             function smackTalk() {
@@ -164,7 +136,7 @@ localStorage.setItem('meowingtonRageQuit', 'true');
                 const msg = document.getElementById('promoMsg');
 
                 if (!input) {
-                    msg.textContent = "psst... type a code first";
+                    msg.textContent = "...type a code first. BORK.";
                     return;
                 }
 
@@ -172,7 +144,7 @@ localStorage.setItem('meowingtonRageQuit', 'true');
                     msg.textContent = "✓ " + codes[input].msg;
                     if (codes[input].action) codes[input].action();
                 } else {
-                    msg.textContent = "Sir Meowington does not recognize that code.";
+                    msg.textContent = "Baron Von Barksalot does not recognize that code. BORK.";
                 }
             }
         </script>
