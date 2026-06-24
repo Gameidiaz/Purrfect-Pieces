@@ -17,9 +17,9 @@
             <button onclick="window.location.href='index.html'">go back</button>
         </div>
         <script>
-            localStorage.setItem('visitedMeowington', 'true');
+            sessionStorage.setItem('visitedMeowington', 'true');
 
-            if (localStorage.getItem('visitedBarksalot') === 'true') {
+            if (sessionStorage.getItem('visitedBarksalot') === 'true') {
                 setTimeout(() => {
                     const msg = document.getElementById('promoMsg');
                     const lines = [
