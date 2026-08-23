@@ -18,7 +18,7 @@
             <button onclick="window.location.href='settings.html'">Settings</button>
             <button onclick="window.location.href='credits.html'">Credits</button>
             <button onclick="playSound('audio/meow.mp3')">:3</button>
-            <button onclick="window.location.href='barksalot.html'" style="background-color:#5b9bd9; border-color:#1a3a5c; color:#1a3a5c;">Baron Von Barksalot's</button>
+            <button onclick="visitGrave()" style="background-color:#9aa0a6; border-color:#3a3d40; color:#3a3d40;">🪦 R.I.P. Baron</button>
         </div>
         <button class="secret-btn" onclick="window.location.href='meowington.html'"></button>
         <audio id="menuMusic" src="audio/picture_purrfect.mp3" loop></audio>
@@ -27,6 +27,44 @@
             <button id="installBtn" style="pointer-events:auto;font-size:13px;padding:6px 14px;opacity:0.85;" onclick="handleInstall()">+ Add to Home Screen</button>
         </div>
         <script>
+            function visitGrave() {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed; inset: 0; z-index: 99999;
+                    background: #1a1a1a; display: flex;
+                    justify-content: center; align-items: center;
+                `;
+                const flashMsg = document.createElement('p');
+                flashMsg.style.cssText = `
+                    color: #9aa0a6; font-family: Arial; font-weight: bold;
+                    font-size: clamp(16px, 3vw, 28px); text-align: center;
+                    padding: 20px; max-width: 80vw;
+                `;
+                overlay.appendChild(flashMsg);
+                document.body.appendChild(overlay);
+
+                const ripLines = [
+                    "here lies Baron Von Barksalot.",
+                    "BORK. forever.",
+                    "he died as he lived: mid-sentence about promo codes.",
+                    "the Emporium has closed. the door still says 'BORK' on it.",
+                    "no more rage quits. no more lawyers named Biscuit. just peace.",
+                    "he is in a better place now. probably still arguing with Sir Meowington.",
+                    "may his bork echo through the code forever. 🐾",
+                    "gone but not forgotten. mostly forgotten. but not gone. 🪦",
+                ];
+
+                let i = 0;
+                const interval = setInterval(() => {
+                    flashMsg.textContent = ripLines[i];
+                    i++;
+                    if (i >= ripLines.length) {
+                        clearInterval(interval);
+                        setTimeout(() => overlay.remove(), 1500);
+                    }
+                }, 3200);
+            }
+
             const music = document.getElementById('menuMusic');
             const hint = document.getElementById('musicHint');
             music.volume = (localStorage.getItem('musicVolume') ?? 50) / 100;

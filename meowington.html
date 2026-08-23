@@ -13,32 +13,28 @@
             <input type="text" id="promoInput" placeholder="enter promo code..." maxlength="32" oninput="this.value = this.value.toUpperCase()">
             <button onclick="redeemCode()">Redeem</button>
             <p id="promoMsg" class="logo" style="font-size: clamp(14px, 2vw, 22px); min-height: 1.5em; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 6px;"></p>
-            <button onclick="smackTalk()">the competition...?</button>
             <button onclick="window.location.href='index.html'">go back</button>
         </div>
         <script>
-            sessionStorage.setItem('visitedMeowington', 'true');
-
-            if (sessionStorage.getItem('visitedBarksalot') === 'true') {
-                setTimeout(() => {
-                    const msg = document.getElementById('promoMsg');
-                    const lines = [
-                        "...wait. mwe can smeww him on you.",
-                        "YOU WENT TO BAWKSAWOT FIWST?? >:(",
-                        "a TWAITOW. in MY shoppe. unbewiavabwe.",
-                        "...fine. mwe will sewve you anyway. but mwe is NOT happy. >_>",
-                    ];
-                    let i = 0;
-                    const interval = setInterval(() => {
-                        msg.textContent = lines[i];
-                        i++;
-                        if (i >= lines.length) {
-                            clearInterval(interval);
-                            setTimeout(() => msg.textContent = '', 2000);
-                        }
-                    }, 2000);
-                }, 500);
-            }
+            setTimeout(() => {
+                const msg = document.getElementById('promoMsg');
+                const lines = [
+                    "...oh? you're hewe. good timing.",
+                    "bawksawot's emporium? cwosed. FOWEVEW. uwu",
+                    "mwe shouldn't be mean but... im gwad hes gone. hehe",
+                    "no more BOWK BOWK BOWK aww day wong. peace at wast.",
+                    "...this is MY shoppe now. was awways my shoppe. but stiww. :3",
+                ];
+                let i = 0;
+                const interval = setInterval(() => {
+                    msg.textContent = lines[i];
+                    i++;
+                    if (i >= lines.length) {
+                        clearInterval(interval);
+                        setTimeout(() => msg.textContent = '', 2000);
+                    }
+                }, 2200);
+            }, 500);
 
             if (localStorage.getItem('meowingtonRageQuit') === 'true') {
                 const overlay = document.createElement('div');
@@ -142,22 +138,6 @@ localStorage.setItem('meowingtonRageQuit', 'true');
                     }
                 },
             };
-
-            const smackLines = [
-                "bawon von bawksawot?? dat FWAUD?? mwe MADE DIS GAME >:3",
-                "he is witewawwy just an ADDON. an AFTERTHOUGHT. uwu",
-                "i was hewe FIWST. dis is MY game. he just showed up one day smh >_>",
-                "his onwy pwomo code is his OWN NAME. mwe has FIVE. well. had. uwu",
-                "he smewws wike a WET DOG and nobody even asked him to be hewe >:(",
-                "SIW MEOWINGTON built dis fwom da gwound up and he thinks he can just WALK IN?? >:3",
-                "mwe has a SECWET BUTTON. vewy excwusive. vewy mystewious. not evewyone can find it uwu",
-                "his button is big and bwue and OBVIOUS because nobody would find him OTHEWWISE >:3",
-            ];
-            let smackIdx = 0;
-            function smackTalk() {
-                document.getElementById('promoMsg').textContent = smackLines[smackIdx % smackLines.length];
-                smackIdx++;
-            }
 
             function redeemCode() {
                 const input = document.getElementById('promoInput').value.trim().toUpperCase();

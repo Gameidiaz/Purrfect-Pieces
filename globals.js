@@ -2,7 +2,7 @@ const defaults = {
     bgImage: 'url("images/Background.png")',
     primaryColor: '#352130',
     secondaryColor: '#d95b7e',
-    font: 'Arial',
+    font: 'Fredoka One',
 };
 
 const googleFontsLink = document.createElement('link');
