@@ -3,6 +3,7 @@ const defaults = {
     primaryColor: '#352130',
     secondaryColor: '#d95b7e',
     font: 'Fredoka One',
+    radius: 20,
 };
 
 const googleFontsLink = document.createElement('link');
@@ -36,31 +37,9 @@ function applySettings() {
     root.style.setProperty('--primary-color', localStorage.getItem('primaryColor') || defaults.primaryColor);
     root.style.setProperty('--secondary-color', localStorage.getItem('secondaryColor') || defaults.secondaryColor);
     root.style.setProperty('--font', localStorage.getItem('font') || defaults.font);
+    const radius = parseInt(localStorage.getItem('radius') ?? defaults.radius);
+    root.style.setProperty('--radius', `${radius}px`);
+    root.style.setProperty('--radius-sm', `${Math.round(radius * 0.6)}px`);
 }
 
 applySettings();
-
-let pendingBtn = null;
-
-document.addEventListener('click', e => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-
-    if (btn === pendingBtn) {
-        pendingBtn = null;
-        return;
-    }
-
-    e.stopPropagation();
-
-    const audio = new Audio('audio/click.wav');
-    audio.volume = (localStorage.getItem('sfxVolume') ?? 100) / 100;
-
-    const proceed = () => {
-        pendingBtn = btn;
-        btn.click();
-    };
-
-    audio.addEventListener('ended', proceed);
-    audio.play().catch(proceed);
-}, true);

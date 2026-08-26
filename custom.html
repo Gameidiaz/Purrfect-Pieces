@@ -13,8 +13,38 @@
 <label>Upload Image
                 <input type="file" id="uploadImage" accept="image/*">
             </label>
+            <button onclick="openDrawPanel()">Draw a Puzzle</button>
             <button onclick="clearUploads()">Clear Uploads</button>
             <div class="puzzle-container" id="customContainer"></div>
+        </div>
+        <div id="drawPanel" style="display:none; position:fixed; inset:0; z-index:200; background:color-mix(in srgb, var(--primary-color) 70%, transparent); align-items:center; justify-content:center; flex-direction:column; gap:12px; padding:14px;">
+            <div id="canvasWrap" style="position:relative; display:inline-block;">
+                <canvas id="drawCanvas" width="450" height="450" style="display:block; background:#fff; border:4px solid var(--primary-color); border-radius:var(--radius-sm); touch-action:none; max-width:90vw; max-height:60vh; box-shadow:0 6px 16px color-mix(in srgb, var(--primary-color) 35%, transparent);"></canvas>
+                <canvas id="previewCanvas" width="450" height="450" style="position:absolute; top:0; left:0; width:100%; height:100%; box-sizing:border-box; border:4px solid transparent; border-radius:var(--radius-sm); pointer-events:none;"></canvas>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center;">
+                <label style="flex-direction:row; gap:8px;">Width
+                    <input type="number" id="canvasWidthInput" min="100" max="1200" step="10" value="450">
+                </label>
+                <label style="flex-direction:row; gap:8px;">Height
+                    <input type="number" id="canvasHeightInput" min="100" max="1200" step="10" value="450">
+                </label>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center;">
+                <input type="color" id="brushColor" value="#352130">
+                <label style="flex-direction:row; gap:8px;">Size
+                    <input type="range" id="brushSize" min="1" max="40" value="6">
+                </label>
+                <button id="brushToolBtn" onclick="setTool('brush')">🖌 Brush</button>
+                <button id="fillToolBtn" onclick="setTool('fill')">🪣 Fill</button>
+                <button id="rectToolBtn" onclick="setTool('rect')">▭ Rect</button>
+                <button id="circleToolBtn" onclick="setTool('circle')">◯ Circle</button>
+                <button onclick="clearCanvas()">Clear</button>
+            </div>
+            <div style="display:flex; gap:14px;">
+                <button onclick="closeDrawPanel()">Cancel</button>
+                <button onclick="saveDrawing()">Save Puzzle</button>
+            </div>
         </div>
         <script>
             const container = document.getElementById('customContainer');
@@ -47,6 +77,238 @@
             function clearUploads() {
                 localStorage.removeItem('customImages');
                 location.reload();
+            }
+
+            const drawPanel = document.getElementById('drawPanel');
+            const drawCanvas = document.getElementById('drawCanvas');
+            const drawCtx = drawCanvas.getContext('2d');
+            const previewCanvas = document.getElementById('previewCanvas');
+            const previewCtx = previewCanvas.getContext('2d');
+            const brushColor = document.getElementById('brushColor');
+            const brushSize = document.getElementById('brushSize');
+            const canvasWidthInput = document.getElementById('canvasWidthInput');
+            const canvasHeightInput = document.getElementById('canvasHeightInput');
+            const brushToolBtn = document.getElementById('brushToolBtn');
+            const fillToolBtn = document.getElementById('fillToolBtn');
+            const rectToolBtn = document.getElementById('rectToolBtn');
+            const circleToolBtn = document.getElementById('circleToolBtn');
+            let drawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            let tool = 'brush';
+            let shapeStart = null;
+
+            function syncPreviewSize() {
+                previewCanvas.width = drawCanvas.width;
+                previewCanvas.height = drawCanvas.height;
+            }
+            syncPreviewSize();
+
+            function setTool(t) {
+                tool = t;
+                const buttons = { brush: brushToolBtn, fill: fillToolBtn, rect: rectToolBtn, circle: circleToolBtn };
+                Object.entries(buttons).forEach(([name, btn]) => {
+                    btn.style.outline = name === t ? '3px solid var(--primary-color)' : 'none';
+                });
+            }
+            setTool('brush');
+
+            function hexToRgb(hex) {
+                const num = parseInt(hex.replace('#', ''), 16);
+                return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+            }
+
+            function floodFill(x, y, hexColor) {
+                x = Math.floor(x);
+                y = Math.floor(y);
+                const w = drawCanvas.width;
+                const h = drawCanvas.height;
+                if (x < 0 || y < 0 || x >= w || y >= h) return;
+
+                const imageData = drawCtx.getImageData(0, 0, w, h);
+                const data = imageData.data;
+                const startIdx = (y * w + x) * 4;
+                const startR = data[startIdx];
+                const startG = data[startIdx + 1];
+                const startB = data[startIdx + 2];
+                const startA = data[startIdx + 3];
+                const [fr, fg, fb] = hexToRgb(hexColor);
+                const fa = 255;
+                if (startR === fr && startG === fg && startB === fb && startA === fa) return;
+
+                const tolerance = 32;
+                function matches(idx) {
+                    return Math.abs(data[idx] - startR) <= tolerance &&
+                        Math.abs(data[idx + 1] - startG) <= tolerance &&
+                        Math.abs(data[idx + 2] - startB) <= tolerance &&
+                        Math.abs(data[idx + 3] - startA) <= tolerance;
+                }
+
+                const stack = [[x, y]];
+                while (stack.length) {
+                    const [cx, cy] = stack.pop();
+                    if (cx < 0 || cy < 0 || cx >= w || cy >= h) continue;
+                    const idx = (cy * w + cx) * 4;
+                    if (!matches(idx)) continue;
+                    data[idx] = fr;
+                    data[idx + 1] = fg;
+                    data[idx + 2] = fb;
+                    data[idx + 3] = fa;
+                    stack.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
+                }
+
+                drawCtx.putImageData(imageData, 0, 0);
+            }
+
+            function clearCanvas() {
+                drawCtx.fillStyle = '#fff';
+                drawCtx.fillRect(0, 0, drawCanvas.width, drawCanvas.height);
+            }
+
+            function resizeCanvas() {
+                const newW = Math.max(50, Math.min(1200, parseInt(canvasWidthInput.value) || drawCanvas.width));
+                const newH = Math.max(50, Math.min(1200, parseInt(canvasHeightInput.value) || drawCanvas.height));
+                if (newW === drawCanvas.width && newH === drawCanvas.height) return;
+
+                const prevImage = drawCanvas.toDataURL('image/png');
+                const prevW = drawCanvas.width;
+                const prevH = drawCanvas.height;
+                const img = new Image();
+                img.onload = () => {
+                    drawCanvas.width = newW;
+                    drawCanvas.height = newH;
+                    drawCtx.fillStyle = '#fff';
+                    drawCtx.fillRect(0, 0, newW, newH);
+                    drawCtx.drawImage(img, 0, 0, prevW, prevH, 0, 0, newW, newH);
+                    syncPreviewSize();
+                };
+                img.src = prevImage;
+            }
+
+            canvasWidthInput.addEventListener('change', resizeCanvas);
+            canvasHeightInput.addEventListener('change', resizeCanvas);
+
+            function openDrawPanel() {
+                canvasWidthInput.value = drawCanvas.width;
+                canvasHeightInput.value = drawCanvas.height;
+                clearCanvas();
+                syncPreviewSize();
+                setTool('brush');
+                drawPanel.style.display = 'flex';
+            }
+
+            function closeDrawPanel() {
+                drawPanel.style.display = 'none';
+            }
+
+            if (new URLSearchParams(window.location.search).get('draw') === '1') {
+                openDrawPanel();
+                history.replaceState({}, '', 'custom.html');
+            }
+
+            function canvasPos(e) {
+                const rect = drawCanvas.getBoundingClientRect();
+                let point = e;
+                if (e.touches && e.touches.length) point = e.touches[0];
+                else if (e.changedTouches && e.changedTouches.length) point = e.changedTouches[0];
+                return {
+                    x: (point.clientX - rect.left) * (drawCanvas.width / rect.width),
+                    y: (point.clientY - rect.top) * (drawCanvas.height / rect.height),
+                };
+            }
+
+            function drawShape(ctx, start, end) {
+                ctx.strokeStyle = brushColor.value;
+                ctx.lineWidth = brushSize.value;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                if (tool === 'rect') {
+                    const x = Math.min(start.x, end.x);
+                    const y = Math.min(start.y, end.y);
+                    ctx.strokeRect(x, y, Math.abs(end.x - start.x), Math.abs(end.y - start.y));
+                } else if (tool === 'circle') {
+                    const cx = (start.x + end.x) / 2;
+                    const cy = (start.y + end.y) / 2;
+                    const rx = Math.abs(end.x - start.x) / 2;
+                    const ry = Math.abs(end.y - start.y) / 2;
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            }
+
+            function startDraw(e) {
+                e.preventDefault();
+                const pos = canvasPos(e);
+
+                if (tool === 'fill') {
+                    floodFill(pos.x, pos.y, brushColor.value);
+                    return;
+                }
+
+                if (tool === 'rect' || tool === 'circle') {
+                    drawing = true;
+                    shapeStart = pos;
+                    return;
+                }
+
+                drawing = true;
+                lastX = pos.x;
+                lastY = pos.y;
+                drawCtx.beginPath();
+                drawCtx.arc(pos.x, pos.y, brushSize.value / 2, 0, Math.PI * 2);
+                drawCtx.fillStyle = brushColor.value;
+                drawCtx.fill();
+            }
+
+            function moveDraw(e) {
+                if (!drawing) return;
+                e.preventDefault();
+                const pos = canvasPos(e);
+
+                if (tool === 'rect' || tool === 'circle') {
+                    previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+                    drawShape(previewCtx, shapeStart, pos);
+                    return;
+                }
+
+                drawCtx.strokeStyle = brushColor.value;
+                drawCtx.lineWidth = brushSize.value;
+                drawCtx.lineCap = 'round';
+                drawCtx.lineJoin = 'round';
+                drawCtx.beginPath();
+                drawCtx.moveTo(lastX, lastY);
+                drawCtx.lineTo(pos.x, pos.y);
+                drawCtx.stroke();
+                lastX = pos.x;
+                lastY = pos.y;
+            }
+
+            function endDraw(e) {
+                if (drawing && (tool === 'rect' || tool === 'circle') && shapeStart) {
+                    drawShape(drawCtx, shapeStart, canvasPos(e));
+                    previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+                    shapeStart = null;
+                }
+                drawing = false;
+            }
+
+            drawCanvas.addEventListener('mousedown', startDraw);
+            drawCanvas.addEventListener('mousemove', moveDraw);
+            drawCanvas.addEventListener('mouseup', endDraw);
+            drawCanvas.addEventListener('mouseleave', endDraw);
+            drawCanvas.addEventListener('touchstart', startDraw);
+            drawCanvas.addEventListener('touchmove', moveDraw);
+            drawCanvas.addEventListener('touchend', endDraw);
+
+            function saveDrawing() {
+                const rawName = prompt('Name this puzzle:', '') ?? '';
+                const name = rawName.trim() || `Custom ${customImages.length + 1}`;
+                const entry = { img: drawCanvas.toDataURL('image/png'), name };
+                customImages.push(entry);
+                localStorage.setItem('customImages', JSON.stringify(customImages));
+                addCustomButton(entry, customImages.length - 1);
+                closeDrawPanel();
             }
 
             function addCustomButton(entry, index) {
