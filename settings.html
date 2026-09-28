@@ -10,70 +10,43 @@
         <div class="ui-container">
             <h1 class="logo">Settings</h1>
 
-            <button onclick="window.location.href='index.html'">Menu</button>
-            <button onclick="resetSettings()">Reset</button>
+            <section class="settings-section">
+                <h2>Style</h2>
+                <label class="setting-row">Background Image
+                    <input type="file" id="bgImageFile" accept="image/*">
+                </label>
+                <label class="setting-row">Font
+                    <select id="fontPicker"></select>
+                </label>
+                <label class="setting-row">
+                    <span>Corner Roundness <span class="setting-value" id="radiusLabel">20px</span></span>
+                    <input type="range" id="radiusSlider" min="0" max="40">
+                </label>
+            </section>
 
-            <label>Primary Color
-                <input type="color" id="primaryColor">
-            </label>
+            <section class="settings-section">
+                <h2>Audio</h2>
+                <label class="setting-row">
+                    <span>Music Volume <span class="setting-value" id="musicLabel">50%</span></span>
+                    <input type="range" id="musicVolume" min="0" max="100">
+                </label>
+                <label class="setting-row">
+                    <span>SFX Volume <span class="setting-value" id="sfxLabel">100%</span></span>
+                    <input type="range" id="sfxVolume" min="0" max="100">
+                </label>
+            </section>
 
-            <label>Secondary Color
-                <input type="color" id="secondaryColor">
-            </label>
-
-            <label>Background Image
-                <input type="file" id="bgImageFile" accept="image/*">
-            </label>
-
-            <label>Music Volume: <span id="musicLabel">50%</span>
-                <input type="range" id="musicVolume" min="0" max="100" value="50">
-            </label>
-
-            <label>SFX Volume: <span id="volumeLabel">100%</span>
-                <input type="range" id="sfxVolume" min="0" max="100" value="100">
-            </label>
-
-            <label>Font
-                <select id="fontPicker"></select>
-            </label>
-
-            <label>Corner Roundness: <span id="radiusLabel">20px</span>
-                <input type="range" id="radiusSlider" min="0" max="40" value="20">
-            </label>
+            <div class="settings-actions">
+                <button onclick="window.location.href='index.html'">Menu</button>
+                <button onclick="resetSettings()">Reset</button>
+            </div>
         </div>
         <script>
-            document.getElementById('primaryColor').value = localStorage.getItem('primaryColor') || defaults.primaryColor;
-            document.getElementById('secondaryColor').value = localStorage.getItem('secondaryColor') || defaults.secondaryColor;
+            // Style
+            const bgImageFile = document.getElementById('bgImageFile');
 
-            const fontPicker = document.getElementById('fontPicker');
-            const savedFont = localStorage.getItem('font') || defaults.font;
-            availableFonts.forEach(f => {
-                const opt = document.createElement('option');
-                opt.value = f;
-                opt.textContent = f;
-                opt.style.fontFamily = f;
-                if (f === savedFont) opt.selected = true;
-                fontPicker.appendChild(opt);
-            });
-            fontPicker.style.fontFamily = savedFont;
-            fontPicker.addEventListener('change', () => {
-                localStorage.setItem('font', fontPicker.value);
-                fontPicker.style.fontFamily = fontPicker.value;
-                applySettings();
-            });
-
-            document.getElementById('primaryColor').addEventListener('input', () => {
-                localStorage.setItem('primaryColor', document.getElementById('primaryColor').value);
-                applySettings();
-            });
-
-            document.getElementById('secondaryColor').addEventListener('input', () => {
-                localStorage.setItem('secondaryColor', document.getElementById('secondaryColor').value);
-                applySettings();
-            });
-
-            document.getElementById('bgImageFile').addEventListener('change', () => {
-                const file = document.getElementById('bgImageFile').files[0];
+            bgImageFile.addEventListener('change', () => {
+                const file = bgImageFile.files[0];
                 if (!file) return;
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -83,53 +56,56 @@
                 reader.readAsDataURL(file);
             });
 
-            const musicVolume = document.getElementById('musicVolume');
-            const musicLabel = document.getElementById('musicLabel');
-            musicVolume.value = localStorage.getItem('musicVolume') ?? 50;
-            musicLabel.textContent = `${musicVolume.value}%`;
-            musicVolume.addEventListener('input', () => {
-                localStorage.setItem('musicVolume', musicVolume.value);
-                musicLabel.textContent = `${musicVolume.value}%`;
+            const fontPicker = document.getElementById('fontPicker');
+            availableFonts.forEach(f => {
+                const opt = document.createElement('option');
+                opt.value = f;
+                opt.textContent = f;
+                opt.style.fontFamily = f;
+                fontPicker.appendChild(opt);
             });
 
-            const sfxVolume = document.getElementById('sfxVolume');
-            const volumeLabel = document.getElementById('volumeLabel');
-            sfxVolume.value = localStorage.getItem('sfxVolume') ?? 100;
-            volumeLabel.textContent = `${sfxVolume.value}%`;
-            sfxVolume.addEventListener('input', () => {
-                localStorage.setItem('sfxVolume', sfxVolume.value);
-                volumeLabel.textContent = `${sfxVolume.value}%`;
-            });
+            function setFont(font) {
+                fontPicker.value = font;
+                fontPicker.style.fontFamily = font;
+            }
+            setFont(localStorage.getItem('font') || defaults.font);
 
-            const radiusSlider = document.getElementById('radiusSlider');
-            const radiusLabel = document.getElementById('radiusLabel');
-            radiusSlider.value = localStorage.getItem('radius') ?? defaults.radius;
-            radiusLabel.textContent = `${radiusSlider.value}px`;
-            radiusSlider.addEventListener('input', () => {
-                localStorage.setItem('radius', radiusSlider.value);
-                radiusLabel.textContent = `${radiusSlider.value}px`;
+            fontPicker.addEventListener('change', () => {
+                localStorage.setItem('font', fontPicker.value);
+                setFont(fontPicker.value);
                 applySettings();
             });
 
+            // Sliders: [storage key, slider id, label id, unit, default, applies to page style]
+            const sliders = [
+                ['radius', 'radiusSlider', 'radiusLabel', 'px', defaults.radius, true],
+                ['musicVolume', 'musicVolume', 'musicLabel', '%', defaults.musicVolume, false],
+                ['sfxVolume', 'sfxVolume', 'sfxLabel', '%', defaults.sfxVolume, false],
+            ].map(([key, sliderId, labelId, unit, fallback, restyle]) => {
+                const slider = document.getElementById(sliderId);
+                const label = document.getElementById(labelId);
+                const set = (value) => {
+                    slider.value = value;
+                    label.textContent = `${value}${unit}`;
+                };
+                set(localStorage.getItem(key) ?? fallback);
+                slider.addEventListener('input', () => {
+                    localStorage.setItem(key, slider.value);
+                    set(slider.value);
+                    if (restyle) applySettings();
+                });
+                return { key, reset: () => set(fallback) };
+            });
+
             function resetSettings() {
-                localStorage.removeItem('bgImage');
-                localStorage.removeItem('primaryColor');
-                localStorage.removeItem('secondaryColor');
-                localStorage.removeItem('font');
-                localStorage.removeItem('musicVolume');
-                musicVolume.value = 50;
-                musicLabel.textContent = '50%';
-                localStorage.removeItem('sfxVolume');
-                sfxVolume.value = 100;
-                volumeLabel.textContent = '100%';
-                localStorage.removeItem('radius');
-                radiusSlider.value = defaults.radius;
-                radiusLabel.textContent = `${defaults.radius}px`;
-                document.getElementById('primaryColor').value = defaults.primaryColor;
-                document.getElementById('secondaryColor').value = defaults.secondaryColor;
-                document.getElementById('bgImageFile').value = '';
-                fontPicker.value = defaults.font;
-                fontPicker.style.fontFamily = defaults.font;
+                ['bgImage', 'font'].forEach(k => localStorage.removeItem(k));
+                sliders.forEach(s => {
+                    localStorage.removeItem(s.key);
+                    s.reset();
+                });
+                bgImageFile.value = '';
+                setFont(defaults.font);
                 applySettings();
             }
         </script>

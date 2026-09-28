@@ -60,6 +60,60 @@ textarea {
     width: 100%;
 }
 
+.settings-section {
+    width: 100%;
+    max-width: 520px;
+    padding: 16px 20px;
+    border: var(--border-width) solid var(--primary-color);
+    border-radius: var(--radius);
+    background-color: color-mix(in srgb, var(--secondary-color) 85%, transparent);
+    box-shadow: 0 8px 14px color-mix(in srgb, var(--primary-color) 35%, transparent);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    animation: pop-in 0.35s ease;
+}
+
+.settings-section h2 {
+    margin: 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid color-mix(in srgb, var(--primary-color) 35%, transparent);
+    font-family: var(--font);
+    font-size: clamp(18px, 3vw, 34px);
+    color: var(--primary-color);
+}
+
+.puzzle-panel {
+    max-width: none;
+    width: auto;
+    align-items: center;
+}
+
+.setting-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    text-align: left;
+    gap: 8px 16px;
+}
+
+.setting-row input[type="range"] {
+    width: clamp(140px, 40vw, 220px);
+}
+
+.setting-value {
+    opacity: 0.7;
+    font-size: 0.8em;
+}
+
+.settings-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 6px;
+}
+
 .puzzle-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));

@@ -93,10 +93,16 @@
         </script>
         <div class="ui-container">
             <h1 class="logo" id="levelCount">Puzzle Levels</h1>
-            <button onclick="window.location.href='index.html'">Menu</button>
-            <button onclick="window.location.href='custom.html'">Custom</button>
-            <div class="puzzle-container">
+
+            <div class="settings-actions">
+                <button onclick="window.location.href='index.html'">Menu</button>
+                <button onclick="window.location.href='custom.html'">Custom</button>
             </div>
+
+            <section class="settings-section puzzle-panel">
+                <div class="puzzle-container">
+                </div>
+            </section>
         </div>
         <script src="play.js"></script>
         <audio id="puzzleMusic" src="audio/puzzled.mp3" loop></audio>

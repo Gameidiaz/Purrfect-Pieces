@@ -4,6 +4,8 @@ const defaults = {
     secondaryColor: '#d95b7e',
     font: 'Fredoka One',
     radius: 20,
+    musicVolume: 50,
+    sfxVolume: 100,
 };
 
 const googleFontsLink = document.createElement('link');
