@@ -358,8 +358,3 @@ input[type="number"] {
     border-radius: var(--radius-sm);
     box-shadow: 0 6px 16px color-mix(in srgb, var(--primary-color) 35%, transparent);
 }
-
-#catformer {
-    border: var(--border-width) solid var(--primary-color);
-    border-radius: var(--radius-sm);
-}
